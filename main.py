@@ -1,14 +1,20 @@
 from PIL import Image
-from datetime import datetime
+from datetime import datetime, timezone
 import streamlit as st
 import os
 import math
 import numpy as np
+import pytz
 
 str_converter = lambda x: x if type(x) == str else f"0{x}" if x < 10 else f"{x}"
 
+def utc_to_local():
+    IST = pytz.timezone('Europe/Istanbul') 
+    date = datetime.now(IST) 
+    return date
+
 def parse_today():
-    date = datetime.now()
+    date = utc_to_local()
     date_string = date.strftime("%m/%d")
     [month, day] = date_string.split("/")
     month, day = int(month), int(day)
@@ -31,7 +37,6 @@ month_box = st.selectbox("Select a month: ", str_months)
 if month_box != "<select>":
     month_index = str_months.index(month_box)
     month = months[month_index]
-    text_string = f"{disciplines[math.floor(month/4)], month_meanings[month-1]}"
 
 days = ["<select>", *list(range(1, len(os.listdir(f"files/Stoicism-{month}"))+1))]
 str_days = list(map(str_converter, days))
