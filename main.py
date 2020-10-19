@@ -5,15 +5,14 @@ import os
 import math
 import numpy as np
 
-str_converter = lambda x: x if x == "<select>" else f"0{x}" if x < 10 else f"{x}"
+str_converter = lambda x: x if type(x) == str else f"0{x}" if x < 10 else f"{x}"
 
-def resize_image(im):
-    width = st.screen.width
-    height = st.screen.height
-    width = math.floor(width * 0.8)
-    height = math.floor(width * 0.8)
-    im = im.resize((width, height), Image.ANTIALIAS)
-    return im
+def parse_today():
+    date = datetime.now()
+    date_string = date.strftime("%m/%d")
+    [month, day] = date_string.split("/")
+    month, day = int(month), int(day)
+    return month, day
 
 def open_image(month, day):
     strday = str_converter(day)
@@ -21,41 +20,30 @@ def open_image(month, day):
     im = Image.open(path)
     return im
 
-def open_todays_image():
-    date = datetime.now()
-    date_string = date.strftime("%m/%d")
-    [month, day] = date_string.split("/")
-    month, day = int(month), int(day)
-    return open_image(month=month, day=day)
-
-div_css = "#root > div:nth-child(1) > div > div > div > div > section > div > div:nth-child(1) > div:nth-child(3) > div > div > div"
-
 st.title("Daily Stoa Texts")
 
-month = "<select>"
-day = "<select>"
+month, day = parse_today()
 
 months = ["<select>", *list(range(1, 13))]
-str_months = list(map(str_converter, ["<select>", *list(range(1, 13))]))
-month_index = str_months.index(st.selectbox("Select a month: ", str_months))
-month = months[month_index]
+str_months = list(map(str_converter, months))
+month_box = st.selectbox("Select a month: ", str_months)
 
-if month != "<select>":
-    days = ["<select>", *list(range(1, len(os.listdir(f"files/Stoicism-{month}"))+1))]
-    days = list(range(1, len(os.listdir(f"files/Stoicism-{month}"))+1))
-    str_days = list(map(str_converter, days))
-    day_index = str_days.index(st.selectbox("Select a day: ", str_days))
+if month_box != "<select>":
+    month_index = str_months.index(month_box)
+    month = months[month_index]
+    text_string = f"{disciplines[math.floor(month/4)], month_meanings[month-1]}"
+
+days = ["<select>", *list(range(1, len(os.listdir(f"files/Stoicism-{month}"))+1))]
+str_days = list(map(str_converter, days))
+day_box = st.selectbox("Select a day: ", str_days)
+
+if day_box != "<select>":
+    day_index = str_days.index(day_box)
     day = days[day_index]
 
-im = open_todays_image()
-#im = resize_image(im)
-im = st.image(im, style={"width": "50%"})
+im = st.image(open_image(month=month, day=day))
 
-if day != "<select>":
-    im.empty()
-    im = open_image(month=month, day=day)
-    #im = resize_image(im)
-    im = st.image(im, style={"width": "50%"})
+div_css = "#root > div:nth-child(1) > div > div > div > div > section > div > div:nth-child(1) > div:nth-child(3) > div > div > div"
 
 st.markdown(f"""
     <style>
