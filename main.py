@@ -7,6 +7,14 @@ import numpy as np
 
 str_converter = lambda x: x if x == "<select>" else f"0{x}" if x < 10 else f"{x}"
 
+def resize_image(im):
+    width = st.screen.width
+    height = st.screen.height
+    width = math.floor(width * 0.8)
+    height = math.floor(width * 0.8)
+    im = im.resize((width, height), Image.ANTIALIAS)
+    return im
+
 def open_image(month, day):
     strday = str_converter(day)
     path = f"files/Stoicism-{month}/Stoicism-{month}-{strday}.jpg"
@@ -18,15 +26,9 @@ def open_todays_image():
     date_string = date.strftime("%m/%d")
     [month, day] = date_string.split("/")
     month, day = int(month), int(day)
-    return open_image(month = month, day = day)
+    return open_image(month=month, day=day)
 
-def resize_image(im, newwidth):
-    width, height = im.size
-    newwidth = 150
-    ratio = math.floor(height / width)
-    newheight = ratio * newwidth
-    im = im.resize((newwidth, newheight), Image.ANTIALIAS)
-    return im
+div_css = "#root > div:nth-child(1) > div > div > div > div > section > div > div:nth-child(1) > div:nth-child(3) > div > div > div"
 
 st.title("Daily Stoa Texts")
 
@@ -46,10 +48,29 @@ if month != "<select>":
     day = days[day_index]
 
 im = open_todays_image()
-im = st.image(im, width=800)
+#im = resize_image(im)
+im = st.image(im, style={"width": "50%"})
 
 if day != "<select>":
     im.empty()
     im = open_image(month=month, day=day)
-    im = st.image(im, width=800)
+    #im = resize_image(im)
+    im = st.image(im, style={"width": "50%"})
 
+st.markdown(f"""
+    <style>
+        body {{
+            background-color: rgb(205, 225, 205);
+        }}
+        h1 {{
+            text-align: center;
+        }}
+        {div_css} {{
+            display: flex;
+            justify-content: center;
+        }}
+        img {{
+            max-width: 100%;
+        }}
+    </style>
+""", unsafe_allow_html=True)
