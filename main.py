@@ -9,8 +9,8 @@ import pytz
 str_converter = lambda x: x if type(x) == str else f"0{x}" if x < 10 else f"{x}"
 
 def utc_to_local():
-    IST = pytz.timezone('Europe/Istanbul') 
-    date = datetime.now(IST) 
+    BER = pytz.timezone('Europe/Berlin')
+    date = datetime.now(BER)
     return date
 
 def parse_today():
