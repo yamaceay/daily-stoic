@@ -30,19 +30,19 @@ st.title("Daily Stoa Texts")
 
 month, day = parse_today()
 
-months = ["<select>", *list(range(1, 13))]
+months = list(range(1, 13))
 str_months = list(map(str_converter, months))
-month_box = st.selectbox("Select a month: ", str_months)
+month_box = st.selectbox("Select a month: ", str_months, index=month-1)
 
-if month_box != "<select>":
+if month_box != str_months[month-1]:
     month_index = str_months.index(month_box)
     month = months[month_index]
 
-days = ["<select>", *list(range(1, len(os.listdir(f"files/Stoicism-{month}"))+1))]
+days = list(range(1, len(os.listdir(f"files/Stoicism-{month}"))+1))
 str_days = list(map(str_converter, days))
-day_box = st.selectbox("Select a day: ", str_days)
+day_box = st.selectbox("Select a day: ", str_days, index=day-1)
 
-if day_box != "<select>":
+if day_box != str_days[day-1]:
     day_index = str_days.index(day_box)
     day = days[day_index]
 
